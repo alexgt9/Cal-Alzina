@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benvingut a Cal Alzina</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏡 Cal Alzina</h1>
+            <p class="subtitle">Benvingut a casa</p>
+        </header>
+
+        <main>
+            <div class="welcome-message">
+                <p>Hola! Estàs a punt d'arribar a Cal Alzina.</p>
+                <p>Utilitza els botons de sota per interactuar amb la casa.</p>
+            </div>
+
+            <div class="actions">
+                <button id="notifyBtn" class="action-btn notify-btn">
+                    <span class="icon">🔔</span>
+                    <span class="text">Ei, ja sóc aquí!</span>
+                </button>
+
+                <button id="openDoorBtn" class="action-btn door-btn">
+                    <span class="icon">🚪</span>
+                    <span class="text">Obre la porta</span>
+                </button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <div class="settings-toggle">
+                <button id="settingsBtn" class="settings-btn">⚙️ Configuració</button>
+            </div>
+
+            <div id="settingsPanel" class="settings-panel hidden">
+                <h3>Configuració de Home Assistant</h3>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="haUrl">URL de Home Assistant:</label>
+                        <input type="text" id="haUrl" placeholder="https://homeassistant.local:8123" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="haToken">Token d'accés:</label>
+                        <input type="password" id="haToken" placeholder="Token llarg de Home Assistant" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notifyService">Servei de notificació:</label>
+                        <input type="text" id="notifyService" placeholder="notify.mobile_app_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lockEntity">Entitat de porta:</label>
+                        <input type="text" id="lockEntity" placeholder="lock.porta_principal" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Desar configuració</button>
+                        <button type="button" id="cancelBtn" class="cancel-btn">Cancel·lar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <p>Cal Alzina © 2026</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
