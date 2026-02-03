@@ -37,27 +37,6 @@
             </div>
 
             <div id="statusMessage" class="status-message"></div>
-
-            <div class="settings-toggle">
-                <button id="settingsBtn" class="settings-btn">⚙️ Configuració</button>
-            </div>
-
-            <div id="settingsPanel" class="settings-panel hidden">
-                <h3>Configuració de Home Assistant</h3>
-                <form id="settingsForm">
-                    <div class="form-group">
-                        <label for="haDomain">Domini de Home Assistant:</label>
-                        <input type="url" id="haDomain" placeholder="https://homeassistant.local:8123" required>
-                        <small style="display: block; margin-top: 5px; color: #666;">
-                            El lloc cridarà els webhooks: /api/webhook/visitant_arribat i /api/webhook/obrir_porta
-                        </small>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="save-btn">Desar configuració</button>
-                        <button type="button" id="cancelBtn" class="cancel-btn">Cancel·lar</button>
-                    </div>
-                </form>
-            </div>
         </main>
 
         <footer>

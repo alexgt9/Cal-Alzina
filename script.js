@@ -35,8 +35,7 @@ async function callWebhook(webhookId, action) {
     const config = loadConfig();
     
     if (!config.haDomain) {
-        showStatus('Si us plau, configura primer el domini de Home Assistant', 'error');
-        document.getElementById('settingsPanel').classList.remove('hidden');
+        showStatus('Error: enllaç no configurat correctament', 'error');
         return false;
     }
 
@@ -95,24 +94,6 @@ async function handleOpenDoor() {
     }
 }
 
-// Settings form handlers
-function loadSettingsForm() {
-    const config = loadConfig();
-    document.getElementById('haDomain').value = config.haDomain;
-}
-
-function handleSaveSettings(e) {
-    e.preventDefault();
-    
-    const config = {
-        haDomain: document.getElementById('haDomain').value.trim().replace(/\/$/, '')
-    };
-    
-    saveConfig(config);
-    showStatus('✅ Configuració desada correctament!', 'success');
-    document.getElementById('settingsPanel').classList.add('hidden');
-}
-
 // Load configuration from query parameters
 function loadConfigFromQuery() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -120,23 +101,16 @@ function loadConfigFromQuery() {
     
     if (domain) {
         const config = {
-            haDomain: domain.trim().replace(/\/$/, ''),
-            fromUrl: true  // Mark that config came from URL
+            haDomain: domain.trim().replace(/\/$/, '')
         };
         saveConfig(config);
-        
-        // Hide settings section
-        const settingsToggle = document.querySelector('.settings-toggle');
-        const settingsPanel = document.getElementById('settingsPanel');
-        if (settingsToggle) settingsToggle.style.display = 'none';
-        if (settingsPanel) settingsPanel.style.display = 'none';
         
         // Clean URL without reloading
         const url = new URL(window.location);
         url.search = '';
         window.history.replaceState({}, '', url);
         
-        showStatus('✅ Configuració carregada des de l\'enllaç!', 'success');
+        showStatus('✅ Llest per utilitzar!', 'success');
     }
 }
 
@@ -145,34 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load config from query params if present
     loadConfigFromQuery();
     
-    // Check if config came from URL and hide settings if so
-    const config = loadConfig();
-    if (config.fromUrl) {
-        const settingsToggle = document.querySelector('.settings-toggle');
-        const settingsPanel = document.getElementById('settingsPanel');
-        if (settingsToggle) settingsToggle.style.display = 'none';
-        if (settingsPanel) settingsPanel.style.display = 'none';
-    }
-    
-    // Load settings into form
-    loadSettingsForm();
-    
     // Action buttons
     document.getElementById('notifyBtn').addEventListener('click', handleNotify);
     document.getElementById('openDoorBtn').addEventListener('click', handleOpenDoor);
-    
-    // Settings panel toggle
-    document.getElementById('settingsBtn').addEventListener('click', function() {
-        const panel = document.getElementById('settingsPanel');
-        panel.classList.toggle('hidden');
-        if (!panel.classList.contains('hidden')) {
-            loadSettingsForm();
-        }
-    });
-    
-    // Settings form
-    document.getElementById('settingsForm').addEventListener('submit', handleSaveSettings);
-    document.getElementById('cancelBtn').addEventListener('click', function() {
-        document.getElementById('settingsPanel').classList.add('hidden');
-    });
 });
