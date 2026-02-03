@@ -41,20 +41,11 @@
                 <h3>Configuració de Home Assistant</h3>
                 <form id="settingsForm">
                     <div class="form-group">
-                        <label for="haUrl">URL de Home Assistant:</label>
-                        <input type="text" id="haUrl" placeholder="https://homeassistant.local:8123" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="haToken">Token d'accés:</label>
-                        <input type="password" id="haToken" placeholder="Token llarg de Home Assistant" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="notifyService">Servei de notificació:</label>
-                        <input type="text" id="notifyService" placeholder="notify.mobile_app_phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lockEntity">Entitat de porta:</label>
-                        <input type="text" id="lockEntity" placeholder="lock.porta_principal" required>
+                        <label for="haDomain">Domini de Home Assistant:</label>
+                        <input type="url" id="haDomain" placeholder="https://homeassistant.local:8123" required>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            El lloc cridarà els webhooks: /api/webhook/visitant_arribat i /api/webhook/obrir_porta
+                        </small>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="save-btn">Desar configuració</button>

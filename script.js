@@ -8,10 +8,7 @@ function loadConfig() {
         return JSON.parse(saved);
     }
     return {
-        haUrl: '',
-        haToken: '',
-        notifyService: 'notify.mobile_app',
-        lockEntity: 'lock.porta_principal'
+        haDomain: ''
     };
 }
 
@@ -33,43 +30,34 @@ function showStatus(message, type) {
     }
 }
 
-// Call Home Assistant API
-async function callHomeAssistant(domain, service, entityId = null, data = {}) {
+// Call webhook
+async function callWebhook(webhookId) {
     const config = loadConfig();
     
-    if (!config.haUrl || !config.haToken) {
-        showStatus('Si us plau, configura primer la connexió amb Home Assistant', 'error');
+    if (!config.haDomain) {
+        showStatus('Si us plau, configura primer el domini de Home Assistant', 'error');
         document.getElementById('settingsPanel').classList.remove('hidden');
         return false;
     }
 
-    const url = `${config.haUrl}/api/services/${domain}/${service}`;
-    
-    const body = {
-        ...data
-    };
-    
-    if (entityId) {
-        body.entity_id = entityId;
-    }
+    const webhookUrl = `${config.haDomain}/api/webhook/${webhookId}`;
 
     try {
-        showStatus('Enviant comanda...', 'loading');
+        showStatus('Enviant...', 'loading');
         
-        const response = await fetch(url, {
+        const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${config.haToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({})
         });
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
 
-        return await response.json();
+        return true;
     } catch (error) {
         console.error('Error:', error);
         showStatus(`Error: ${error.message}`, 'error');
@@ -79,24 +67,16 @@ async function callHomeAssistant(domain, service, entityId = null, data = {}) {
 
 // Notify button handler
 async function handleNotify() {
-    const config = loadConfig();
-    const result = await callHomeAssistant('notify', config.notifyService.split('.')[1], null, {
-        message: 'Algú ha arribat a Cal Alzina!',
-        title: 'Cal Alzina',
-        data: {
-            priority: 'high'
-        }
-    });
+    const result = await callWebhook('visitant_arribat');
     
     if (result) {
-        showStatus('✅ Notificació enviada correctament!', 'success');
+        showStatus('✅ Notificació enviada!', 'success');
     }
 }
 
 // Open door button handler
 async function handleOpenDoor() {
-    const config = loadConfig();
-    const result = await callHomeAssistant('lock', 'unlock', config.lockEntity);
+    const result = await callWebhook('obrir_porta');
     
     if (result) {
         showStatus('✅ Porta oberta!', 'success');
@@ -106,20 +86,14 @@ async function handleOpenDoor() {
 // Settings form handlers
 function loadSettingsForm() {
     const config = loadConfig();
-    document.getElementById('haUrl').value = config.haUrl;
-    document.getElementById('haToken').value = config.haToken;
-    document.getElementById('notifyService').value = config.notifyService;
-    document.getElementById('lockEntity').value = config.lockEntity;
+    document.getElementById('haDomain').value = config.haDomain;
 }
 
 function handleSaveSettings(e) {
     e.preventDefault();
     
     const config = {
-        haUrl: document.getElementById('haUrl').value.trim().replace(/\/$/, ''),
-        haToken: document.getElementById('haToken').value.trim(),
-        notifyService: document.getElementById('notifyService').value.trim(),
-        lockEntity: document.getElementById('lockEntity').value.trim()
+        haDomain: document.getElementById('haDomain').value.trim().replace(/\/$/, '')
     };
     
     saveConfig(config);
@@ -127,8 +101,31 @@ function handleSaveSettings(e) {
     document.getElementById('settingsPanel').classList.add('hidden');
 }
 
+// Load configuration from query parameters
+function loadConfigFromQuery() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const domain = urlParams.get('domain');
+    
+    if (domain) {
+        const config = {
+            haDomain: domain.trim().replace(/\/$/, '')
+        };
+        saveConfig(config);
+        
+        // Clean URL without reloading
+        const url = new URL(window.location);
+        url.search = '';
+        window.history.replaceState({}, '', url);
+        
+        showStatus('✅ Configuració carregada des de l\'enllaç!', 'success');
+    }
+}
+
 // Initialize event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    // Load config from query params if present
+    loadConfigFromQuery();
+    
     // Load settings into form
     loadSettingsForm();
     
