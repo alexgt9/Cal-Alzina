@@ -67,7 +67,7 @@ async function callWebhook(webhookId) {
 
 // Notify button handler
 async function handleNotify() {
-    const result = await callWebhook('visitant_arribat');
+    const result = await callWebhook('invitado_en_la_puerta');
     
     if (result) {
         showStatus('✅ Notificació enviada!', 'success');
@@ -76,7 +76,7 @@ async function handleNotify() {
 
 // Open door button handler
 async function handleOpenDoor() {
-    const result = await callWebhook('obrir_porta');
+    const result = await callWebhook('abrir_puerta');
     
     if (result) {
         showStatus('✅ Porta oberta!', 'success');
@@ -108,9 +108,16 @@ function loadConfigFromQuery() {
     
     if (domain) {
         const config = {
-            haDomain: domain.trim().replace(/\/$/, '')
+            haDomain: domain.trim().replace(/\/$/, ''),
+            fromUrl: true  // Mark that config came from URL
         };
         saveConfig(config);
+        
+        // Hide settings section
+        const settingsToggle = document.querySelector('.settings-toggle');
+        const settingsPanel = document.getElementById('settingsPanel');
+        if (settingsToggle) settingsToggle.style.display = 'none';
+        if (settingsPanel) settingsPanel.style.display = 'none';
         
         // Clean URL without reloading
         const url = new URL(window.location);
@@ -125,6 +132,15 @@ function loadConfigFromQuery() {
 document.addEventListener('DOMContentLoaded', function() {
     // Load config from query params if present
     loadConfigFromQuery();
+    
+    // Check if config came from URL and hide settings if so
+    const config = loadConfig();
+    if (config.fromUrl) {
+        const settingsToggle = document.querySelector('.settings-toggle');
+        const settingsPanel = document.getElementById('settingsPanel');
+        if (settingsToggle) settingsToggle.style.display = 'none';
+        if (settingsPanel) settingsPanel.style.display = 'none';
+    }
     
     // Load settings into form
     loadSettingsForm();
