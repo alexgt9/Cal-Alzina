@@ -67,6 +67,30 @@ main {
     margin-bottom: 10px;
 }
 
+.name-input-group {
+    margin-top: 20px;
+}
+
+.name-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.name-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.name-input::placeholder {
+    color: #999;
+}
+
 .actions {
     display: flex;
     flex-direction: column;

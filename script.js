@@ -31,12 +31,20 @@ function showStatus(message, type) {
 }
 
 // Call webhook
-async function callWebhook(webhookId) {
+async function callWebhook(webhookId, action) {
     const config = loadConfig();
     
     if (!config.haDomain) {
         showStatus('Si us plau, configura primer el domini de Home Assistant', 'error');
         document.getElementById('settingsPanel').classList.remove('hidden');
+        return false;
+    }
+
+    // Get visitor name
+    const visitorName = document.getElementById('visitorName').value.trim();
+    if (!visitorName) {
+        showStatus('Si us plau, escriu el teu nom primer', 'error');
+        document.getElementById('visitorName').focus();
         return false;
     }
 
@@ -50,7 +58,11 @@ async function callWebhook(webhookId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                name: visitorName,
+                action: action,
+                timestamp: new Date().toISOString()
+            })
         });
 
         if (!response.ok) {
@@ -67,7 +79,7 @@ async function callWebhook(webhookId) {
 
 // Notify button handler
 async function handleNotify() {
-    const result = await callWebhook('invitado_en_la_puerta');
+    const result = await callWebhook('invitado_en_la_puerta', 'notify');
     
     if (result) {
         showStatus('✅ Notificació enviada!', 'success');
@@ -76,7 +88,7 @@ async function handleNotify() {
 
 // Open door button handler
 async function handleOpenDoor() {
-    const result = await callWebhook('abrir_puerta');
+    const result = await callWebhook('abrir_puerta', 'open_door');
     
     if (result) {
         showStatus('✅ Porta oberta!', 'success');
