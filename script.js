@@ -8,7 +8,8 @@ function loadConfig() {
         return JSON.parse(saved);
     }
     return {
-        haDomain: ''
+        haDomain: '',
+        token: ''
     };
 }
 
@@ -60,7 +61,8 @@ async function callWebhook(webhookId, action) {
             body: JSON.stringify({
                 name: visitorName,
                 action: action,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                token: config.token
             })
         });
 
@@ -98,10 +100,12 @@ async function handleOpenDoor() {
 function loadConfigFromQuery() {
     const urlParams = new URLSearchParams(window.location.search);
     const domain = urlParams.get('domain');
+    const token = urlParams.get('token');
     
-    if (domain) {
+    if (domain && token) {
         const config = {
-            haDomain: domain.trim().replace(/\/$/, '')
+            haDomain: domain.trim().replace(/\/$/, ''),
+            token: token.trim()
         };
         saveConfig(config);
         
@@ -111,6 +115,8 @@ function loadConfigFromQuery() {
         window.history.replaceState({}, '', url);
         
         showStatus('✅ Llest per utilitzar!', 'success');
+    } else if (domain || token) {
+        showStatus('Error: enllaç incomplet', 'error');
     }
 }
 
